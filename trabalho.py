@@ -2,6 +2,7 @@ import osmnx as ox
 import networkx as nx
 import folium
 import json
+import criaGrafo
 
 def ler_arquivo(caminho_arquivo):
 
@@ -9,22 +10,23 @@ def ler_arquivo(caminho_arquivo):
         dados = json.load(arquivo)
     return dados
 
+
 listaEscolas = ler_arquivo("escolas.txt")
 listaAlunos = ler_arquivo("alunos.txt")
 
 # Coordenadas de origem e destino
-orig_coord = listaAlunos["alunos"][0]['coordenadas']
-dest_coord = listaEscolas["escolas"][listaAlunos["alunos"][0]['idEscola']]['coordenadas']
+orig_coord = [-22.95799250187836, -42.94133869533531]
+dest_coord = [-22.9186637,-42.8835449]
 
 # Baixar grafo da área em torno dos pontos
 G = ox.graph_from_point(orig_coord, dist=15000, network_type="drive")
 
-# Encontrar os nós mais próximos às coordenadas
-orig_node = ox.nearest_nodes(G, X=orig_coord[1], Y=orig_coord[0])
-dest_node = ox.nearest_nodes(G, X=dest_coord[1], Y=dest_coord[0])
+# nós de origem e destino
+orig_no = ox.nearest_nodes(G,-22.95799250187836, -42.94133869533531)
+dest_no = ox.nearest_nodes(G,-22.9186637,-42.8835449)
 
-# Calcular o menor caminho (por distância)
-route = nx.shortest_path(G, source=orig_node, target=dest_node, weight="length")
+#le todos os nós e calcula a distancia entre eles, criando o grafo
+grafo = criaGrafo.cria_grafo(listaAlunos,G,orig_no, dest_no)
 
 # Converter o grafo em GeoDataFrames
 nodes, edges = ox.graph_to_gdfs(G)
