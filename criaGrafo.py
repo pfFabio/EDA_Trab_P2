@@ -8,4 +8,10 @@ def cria_grafo(G):
         if u not in grafo:
             grafo[u] = {}
         grafo[u][v] = dist
+
+        if v not in grafo:
+            grafo[v] = {}
+        grafo[v][u] = dist
+    
     return grafo
+

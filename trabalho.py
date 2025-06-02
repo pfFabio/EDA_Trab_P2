@@ -3,6 +3,7 @@ import networkx as nx
 import folium
 import json
 import criaGrafo
+import Dijkstra
 import os
 #salvando grafos para nao recalcular
 
@@ -24,12 +25,9 @@ def ler_arquivo(caminho_arquivo):
     return dados
 
 
-listaEscolas = ler_arquivo("escolas.txt")
-listaAlunos = ler_arquivo("alunos.txt")
-
 # Coordenadas de origem e destino
-orig_coord = [-22.95799250187836, -42.94133869533531]
-dest_coord = [-22.9186637,-42.8835449]
+orig_coord = [-22.924934, -42.818895]
+dest_coord = [-22.913423, -42.819966]
 
 
 
@@ -48,14 +46,14 @@ else:
     print("Grafo salvo com sucesso.")
 
 # nós de origem e destino
-orig_no = ox.nearest_nodes(G,-22.95799250187836, -42.94133869533531)
-dest_no = ox.nearest_nodes(G,-22.9186637,-42.8835449)
+orig_no = ox.nearest_nodes(G, orig_coord[1], orig_coord[0])
+dest_no = ox.nearest_nodes(G, dest_coord[1], dest_coord[0])
 
-#le todos os nós e calcula a distancia entre eles, criando o grafo/matriz
-grafo = criaGrafo.cria_grafo(listaAlunos,G,orig_no, dest_no)
-print("GRAFOOOOOOOOOO")
-print(grafo)
-print("GRAFOOOOOOOOOO")
+#le todos os nós e organiza
+grafo = criaGrafo.cria_grafo(G)
+
+route, distancia = Dijkstra.dijkstra(grafo, orig_no, dest_no)
+
 # Converter o grafo em GeoDataFrames
 nodes, edges = ox.graph_to_gdfs(G)
 
@@ -80,7 +78,9 @@ for _, row in edges.iterrows():
 route_coords = [(G.nodes[node]['y'], G.nodes[node]['x']) for node in route]
 folium.PolyLine(route_coords, color="red", weight=4, opacity=0.8, tooltip="Menor caminho").add_to(grupoRota)
 
-#criar marcadores de escolas
+
+"""
+criar marcadores de escolas
 for escola in listaEscolas['escolas']:
     alunosEscola = []
     for aluno in listaAlunos['alunos']:
@@ -96,9 +96,9 @@ for escola in listaEscolas['escolas']:
         tooltip=escola['nome'], 
         popup=f"ALUNOS PARA ENTREGAR \n {alunosEscola}",
         icon=folium.Icon(prefix = "fa", color="blue", icon= "building")).add_to(grupoEscolas)
-
+"""
 #localizacao atual - falta verificar a coordenada do elemento
-folium.vector_layers.Circle(location = (-22.910478, -42.834864), radius = 30, fill = 'blue', fill_opacity = .8).add_to(mapa)
+folium.vector_layers.Circle(location = (orig_coord[0], orig_coord[1]), radius = 30, fill = 'blue', fill_opacity = .8).add_to(mapa)
 
 folium.LayerControl().add_to(mapa)
 # Salvar e exibir
