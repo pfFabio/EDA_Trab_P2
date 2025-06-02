@@ -5,11 +5,11 @@ import matplotlib.pyplot as plt
 # Define o nome da cidade ou área de interesse
 lugar = "Maricá, Brazil"
 
+orig_coord = (-22.95799250187836, -42.94133869533531)  
 # Baixa o grafo da rede viária da área
-G = ox.graph_from_place(lugar, network_type="drive")  # use 'drive' para carros
+G = ox.graph_from_point(orig_coord,dist=5000, network_type="drive")  # use 'drive' para carros
 
 # Define coordenadas de origem e destino (longitude, latitude)
-orig_coord = (-22.95799250187836, -42.94133869533531)  
 dest_coord = (-22.904698114208646, -42.80202441250512)  
 
 # Converte coordenadas para nós mais próximos no grafo

@@ -31,9 +31,7 @@ listaAlunos = ler_arquivo("alunos.txt")
 orig_coord = [-22.95799250187836, -42.94133869533531]
 dest_coord = [-22.9186637,-42.8835449]
 
-#coordenada inicial
 
-coordenadaInicial = [-22.9105756,-42.8363557]
 
 # Baixar grafo da área em torno dos pontos
 G = None
@@ -53,9 +51,11 @@ else:
 orig_no = ox.nearest_nodes(G,-22.95799250187836, -42.94133869533531)
 dest_no = ox.nearest_nodes(G,-22.9186637,-42.8835449)
 
-#le todos os nós e calcula a distancia entre eles, criando o grafo
+#le todos os nós e calcula a distancia entre eles, criando o grafo/matriz
 grafo = criaGrafo.cria_grafo(listaAlunos,G,orig_no, dest_no)
-
+print("GRAFOOOOOOOOOO")
+print(grafo)
+print("GRAFOOOOOOOOOO")
 # Converter o grafo em GeoDataFrames
 nodes, edges = ox.graph_to_gdfs(G)
 
