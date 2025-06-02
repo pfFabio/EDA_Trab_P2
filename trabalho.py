@@ -3,7 +3,20 @@ import networkx as nx
 import folium
 import json
 import criaGrafo
+import os
+#salvando grafos para nao recalcular
 
+graph_filename = "marica_drive_graph.graphml"
+graph_folder = "graphs" # Pasta para armazenar os grafos
+
+# Cria a pasta 'graphs' se ela não existir
+if not os.path.exists(graph_folder):
+    os.makedirs(graph_folder)
+
+graph_filepath = os.path.join(graph_folder, graph_filename)
+
+
+# abrir json
 def ler_arquivo(caminho_arquivo):
 
     with open(caminho_arquivo, "r") as arquivo:
@@ -18,8 +31,23 @@ listaAlunos = ler_arquivo("alunos.txt")
 orig_coord = [-22.95799250187836, -42.94133869533531]
 dest_coord = [-22.9186637,-42.8835449]
 
+#coordenada inicial
+
+coordenadaInicial = [-22.9105756,-42.8363557]
+
 # Baixar grafo da área em torno dos pontos
-G = ox.graph_from_point(orig_coord, dist=15000, network_type="drive")
+G = None
+if os.path.exists(graph_filepath):
+    print(f"Carregando grafo de '{graph_filepath}'...")
+    G = ox.load_graphml(graph_filepath)
+    print("Grafo carregado com sucesso.")
+else:
+    print(f"Baixando grafo para a área ao redor de {orig_coord}...")
+    G = ox.graph_from_point(orig_coord, dist=15000, network_type="drive")
+    print("Grafo baixado com sucesso.")
+    print(f"Salvando grafo em '{graph_filepath}'...")
+    ox.save_graphml(G, filepath=graph_filepath)
+    print("Grafo salvo com sucesso.")
 
 # nós de origem e destino
 orig_no = ox.nearest_nodes(G,-22.95799250187836, -42.94133869533531)
@@ -46,6 +74,8 @@ for _, row in edges.iterrows():
     coords = [(lat, lon) for lon, lat in row["geometry"].coords]
     folium.PolyLine(coords, color="gray", weight=1, opacity=0.5).add_to(grupoRuas)
 """
+
+
 # Adicionar rota do menor caminho
 route_coords = [(G.nodes[node]['y'], G.nodes[node]['x']) for node in route]
 folium.PolyLine(route_coords, color="red", weight=4, opacity=0.8, tooltip="Menor caminho").add_to(grupoRota)

@@ -3,6 +3,7 @@
 # dependencies
 /ambiente
 /cache
+/__pycache__
 # testing
 
 
