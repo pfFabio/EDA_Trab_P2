@@ -6,10 +6,10 @@ def cria_grafo(G):
             grafo[u] = {}
         grafo[u][v] = dist
 
-        if not G.is_directed():
-                if v not in grafo:
-                    grafo[v] = {}
-                grafo[v][u] = dist
+
+        if v not in grafo:
+            grafo[v] = {}
+        grafo[v][u] = dist
     
     return grafo
 

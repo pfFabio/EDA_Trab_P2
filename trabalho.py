@@ -2,7 +2,8 @@ from osmnx import load_graphml, graph_from_point, save_graphml, nearest_nodes, g
 from folium import Map, FeatureGroup, PolyLine, Marker, Icon, vector_layers, LayerControl
 from json import load
 import criaGrafo
-import Dijkstra
+from listaalunos import lista_alunos
+from Caixeiro import Caixeiro_preguiçoso
 from os import path, makedirs
 #salvando grafos para nao recalcular
 
@@ -56,7 +57,13 @@ dest_no = nearest_nodes(G, float(dest_coord[1]), float(dest_coord[0]))
 #le todos os nós e organiza
 grafo = criaGrafo.cria_grafo(G)
 
-route, distancia = Dijkstra.dijkstra(grafo, orig_no, dest_no)
+#cria lista de alunos
+nosAlunos = lista_alunos(0, listaAlunos, G)
+
+
+# Executar o algoritmo do Caixeiro Preguiçoso
+route, distancia = Caixeiro_preguiçoso(grafo, nosAlunos, orig_no, dest_no)
+print(f"Rota encontrada: {route} com distância total de {distancia:.2f} m")
 
 # Converter o grafo em GeoDataFrames
 nodes, edges = graph_to_gdfs(G)
@@ -66,8 +73,28 @@ center_lat = (orig_coord[0] + dest_coord[0]) / 2
 center_lon = (orig_coord[1] + dest_coord[1]) / 2
 mapa = Map(location=[center_lat, center_lon], zoom_start=13, tiles="cartodb voyager")
 
+# marcadores de escolas
 grupoEscolas = FeatureGroup("Escolas").add_to(mapa)
+for escola in listaEscolas['escolas']:
+    lat = escola['coordenadas'][0]
+    lon = escola['coordenadas'][1]
+    Marker(
+        location=(lat, lon),
+        tooltip=f"Escola {escola.get('nome', escola.get('id', ''))}",
+        icon=Icon(color="blue", icon="graduation-cap", prefix="fa")
+    ).add_to(grupoEscolas)
+
+# marcadores de alunos
 grupoAlunos = FeatureGroup("Alunos").add_to(mapa)
+for node_id in nosAlunos:
+    lat = G.nodes[node_id]['y']
+    lon = G.nodes[node_id]['x']
+    Marker(
+        location=(lat, lon),
+        tooltip=f"Aluno {node_id}",
+        icon=Icon(color="green", icon="user")
+    ).add_to(grupoAlunos)
+
 grupoRuas = FeatureGroup("Ruas").add_to(mapa)
 grupoRota = FeatureGroup("RotaAtual").add_to(mapa)
 
@@ -79,28 +106,31 @@ for _, row in edges.iterrows():
 
 
 # Adicionar rota do menor caminho
-route_coords = [(G.nodes[node]['y'], G.nodes[node]['x']) for node in route]
-PolyLine(route_coords, color="red", weight=4, opacity=0.8, tooltip="Menor caminho").add_to(grupoRota)
+#route_coords = [(G.nodes[node]['y'], G.nodes[node]['x']) for node in route]
+#PolyLine(route_coords, color="red", weight=4, opacity=0.8, tooltip="Menor caminho").add_to(grupoRota)
 
+rota_coords = []
 
-"""
-criar marcadores de escolas
-for escola in listaEscolas['escolas']:
-    alunosEscola = []
-    for aluno in listaAlunos['alunos']:
-        aluno['idEscola'] == escola['id'] and alunosEscola.append(aluno['nome'])
-        
-        Marker(
-            aluno['coordenadas'], 
-            tooltip=aluno['nome'], 
-            popup=aluno['nome'], 
-            icon=Icon(prefix = "fa", color="red", icon= "graduation-cap") ).add_to(grupoAlunos)
-    Marker(
-        escola['coordenadas'], 
-        tooltip=escola['nome'], 
-        popup=f"ALUNOS PARA ENTREGAR \n {alunosEscola}",
-        icon=Icon(prefix = "fa", color="blue", icon= "building")).add_to(grupoEscolas)
-"""
+for i, (u, v) in enumerate(zip(route[:-1], route[1:])):
+    edge_data = G.get_edge_data(u, v)
+    if edge_data is None:
+        continue
+    edge = list(edge_data.values())[0]
+    if 'geometry' in edge:
+        coords = [(lat, lon) for lon, lat in edge['geometry'].coords]
+        if i == 0:
+            rota_coords.extend(coords)
+        else:
+            # Adiciona a partir do segundo ponto para evitar duplicação e linhas retas
+            rota_coords.extend(coords[1:])
+    else:
+        lat1, lon1 = G.nodes[u]['y'], G.nodes[u]['x']
+        lat2, lon2 = G.nodes[v]['y'], G.nodes[v]['x']
+        if i == 0:
+            rota_coords.append((lat1, lon1))
+        rota_coords.append((lat2, lon2))
+
+PolyLine(rota_coords, color="green", weight=4, opacity=0.8, tooltip="Menor caminho").add_to(grupoRota)
 #localizacao atual - falta verificar a coordenada do elemento
 vector_layers.Circle(location = (orig_coord[0], orig_coord[1]), radius = 30, fill = 'blue', fill_opacity = .8).add_to(mapa)
 
