@@ -1,6 +1,3 @@
-import osmnx as ox
-import networkx as nx
-
 def cria_grafo(G):
     grafo = {}
     for u, v, data in G.edges(data=True):

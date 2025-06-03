@@ -1,6 +1,4 @@
-import heapq
-
-
+from heapq import heappush, heappop
 
 
 def dijkstra(grafo, origem, destino):
@@ -15,7 +13,7 @@ def dijkstra(grafo, origem, destino):
 
     while heap:
         #dando pop na cabeça
-        atual_dist, atual_no = heapq.heappop(heap)
+        atual_dist, atual_no = heappop(heap)
         if atual_dist > dist[atual_no]:
             continue
         #testando se cheguei no destino//condição de parada
@@ -34,7 +32,7 @@ def dijkstra(grafo, origem, destino):
                 #anotando o nó
                 anterior[vizinho] = atual_no
                 #adicionando no heap(ainda não entendi o heap)
-                heapq.heappush(heap, (nova_dist, vizinho))
+                heappush(heap, (nova_dist, vizinho))
 
     #agora volta pra ver qual foi o melhor caminho
     melhor_caminho = []
