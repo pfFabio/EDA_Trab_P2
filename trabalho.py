@@ -98,7 +98,19 @@ for escola in listaEscolas['escolas']:
         icon=folium.Icon(prefix = "fa", color="blue", icon= "building")).add_to(grupoEscolas)
 """
 #localizacao atual - falta verificar a coordenada do elemento
-folium.vector_layers.Circle(location = (orig_coord[0], orig_coord[1]), radius = 30, fill = 'blue', fill_opacity = .8).add_to(mapa)
+#folium.vector_layers.Circle(location = (orig_coord[0], orig_coord[1]), radius = 30, fill = 'blue', fill_opacity = .8).add_to(mapa)
+folium.Marker(
+    location=(orig_coord[0], orig_coord[1]),
+    popup="Origem",
+    icon=folium.Icon(color="blue", icon="user", prefix='fa')
+).add_to(mapa)
+
+folium.Marker(
+    location=(dest_coord[0], dest_coord[1]),
+    popup="Destino",
+    icon=folium.Icon(color="green", icon="flag", prefix='fa')
+).add_to(mapa)
+
 
 folium.LayerControl().add_to(mapa)
 # Salvar e exibir
