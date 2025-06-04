@@ -42,7 +42,6 @@ def dijkstra(grafo, origem, destino):
         melhor_caminho.append(no)
         #quase uma recursão
         no = anterior[no]
-    print("Melhor caminho encontrado:", melhor_caminho)
     melhor_caminho.reverse()
 
     
