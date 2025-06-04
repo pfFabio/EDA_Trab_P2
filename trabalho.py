@@ -3,7 +3,7 @@ from folium import Map, FeatureGroup, PolyLine, Marker, Icon, vector_layers, Lay
 from json import load
 import criaGrafo
 from listaalunos import lista_alunos
-from Caixeiro import Caixeiro_preguiçoso
+from Caixeiro import Caixeiro_preguicoso
 from os import path, makedirs
 #salvando grafos para nao recalcular
 
@@ -30,9 +30,10 @@ listaAlunos = ler_arquivo("alunos.txt")
 #coordenada inicial - GARAGEM
 
 coordenadaInicial = [-22.9105756,-42.8363557]
+localizacaoAtual = coordenadaInicial
 
 # Coordenadas de origem e destino
-orig_coord = coordenadaInicial
+orig_coord = localizacaoAtual
 dest_coord = listaEscolas["escolas"][listaAlunos["alunos"][7]['idEscola']]['coordenadas']
 
 print(dest_coord)
@@ -57,12 +58,14 @@ dest_no = nearest_nodes(G, float(dest_coord[1]), float(dest_coord[0]))
 #le todos os nós e organiza
 grafo = criaGrafo.cria_grafo(G)
 
+
+
 #cria lista de alunos
 nosAlunos = lista_alunos(0, listaAlunos, G)
 
 
 # Executar o algoritmo do Caixeiro Preguiçoso
-route, distancia = Caixeiro_preguiçoso(grafo, nosAlunos, orig_no, dest_no)
+route, distancia = Caixeiro_preguicoso(grafo, nosAlunos, orig_no, dest_no)
 print(f"Rota encontrada: {route} com distância total de {distancia:.2f} m")
 
 # Converter o grafo em GeoDataFrames
