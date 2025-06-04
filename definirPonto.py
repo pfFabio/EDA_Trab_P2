@@ -1,10 +1,64 @@
+# a principio vou descartar
 import Dijkstra
+from osmnx import nearest_nodes
+from json import load
+# abrir json
+def ler_arquivo(caminho_arquivo):
+    print("Lendo Json...")
+    with open(caminho_arquivo, "r") as arquivo:
+        dados = load(arquivo)
+    return dados
+
+listaEscolas = ler_arquivo("escolas.txt")
+listaAlunos = ler_arquivo("alunos.txt")
+
+def adicionarPontoNoDicionario(grafo, lista):
+    for item in lista:
+        item['ponto'] = nearest_nodes(grafo, X=item['coordenadas'][1], Y=item['coordenadas'][0])
 
 
-def Caixeiro_preguicoso(grafo, alunos, origem, destino):
+for aluno in listaAlunos['alunos']:
+    aluno['ponto'] = nearest_nodes(grafo, X=aluno['coordenadas'][1], Y=aluno['coordenadas'][0])
+    print(aluno)
 
-    print("lista de alunos: ", alunos)
-    alunos_a_visitar = list(set(alunos))
+
+
+
+def definirProximosPontos(grafo, listaAlunos, listaEscolas, origem, destino, listaBusca = []):
+    alunosRecolhidos = []
+    escolasLiberadas = [] #quando todos alunos da escola ja tiverem recolhidos ela é adicionada a lista
+    pontosAlunosPorEscola = []
+    if len(listaBusca) == 0:
+        for aluno in listaAlunos['alunos']:
+            listaBusca.append(aluno['id'])
+
+
+    for escola in listaEscolas['escolas']:
+        pontosAlunos = []
+        idAlunos = []
+        nomes = []
+        for aluno in listaAlunos['alunos']:
+            if aluno['idEscola'] == escola['id']:
+                pontosAlunos.append(nearest_nodes(grafo, X=aluno['coordenadas'][1], Y=aluno['coordenadas'][0]))
+                idAlunos.append(aluno['id'])
+                nomes.append(aluno['nome'])
+        if len(pontosAlunos) > 0:
+            ponto = nearest_nodes(grafo, X=escola['coordenadas'][1], Y=escola['coordenadas'][0])
+            pontosAlunosPorEscola.append(dict(idEscola = escola['id'], nomeEscola = escola['nome'], pontoEscola = ponto, alunosId = idAlunos, nomeAluno = nomes, pontosAlunos = pontosAlunos))
+
+    if len(alunosRecolhidos) > 0:
+        for alunos in alunosRecolhidos:
+
+            print(pontosAlunosPorEscola)
+        for escola in pontosAlunosPorEscola:
+            print(pontosAlunosPorEscola)
+
+
+    return None
+
+"""
+    print("lista de pontos a visitar: ", todosPontos)
+    Pontos = list(set(todosPontos))
 
     print(f"Nós a visitar: {alunos_a_visitar}")
 
@@ -64,7 +118,7 @@ def Caixeiro_preguicoso(grafo, alunos, origem, destino):
 
 #    print(f"Tour final (nós): {tour}")
     print(f"Distância total: {total_dist:.2f} m")
-    return tour, total_dist
+    return tour, total_dist"""
 
 
 
