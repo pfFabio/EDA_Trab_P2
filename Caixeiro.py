@@ -55,7 +55,7 @@ def Caixeiro_preguicoso(grafo, alunos, origem, destino):
         path, distance = Dijkstra.dijkstra(grafo, no_atual, destino)
         if path and len(path) > 1 and path[-1] == destino:
             total_dist += distance
-            tour += path[1:]  # Adiciona o caminho, exceto o nó atual (já está no tour)
+            tour += path  # Adiciona o caminho, exceto o nó atual (já está no tour)
             print(f"  -> Indo para destino {destino}. Distância final: {total_dist:.2f} m")
         else:
             print(f"Não foi possível calcular o caminho do último aluno para o destino.")

@@ -5,6 +5,8 @@ from streamlit_folium import st_folium
 from osmnx import graph_from_point, load_graphml, save_graphml, nearest_nodes
 import networkx as nx
 from os import path, makedirs
+from Dijkstra import dijkstra
+
 
 st.set_page_config(layout="wide")
 
@@ -57,7 +59,7 @@ def calcular_distancias_alunos():
     distancias = []
     for aluno, no_aluno in nos_alunos:
         try:
-            dist = nx.shortest_path_length(G, orig_no, no_aluno, weight="length")
+            caminho, dist = dijkstra(G, orig_no, no_aluno)
             distancias.append((aluno, no_aluno, dist))
         except:
             continue

@@ -32,9 +32,12 @@ listaAlunos = ler_arquivo("alunos.txt")
 coordenadaInicial = [-22.9105756,-42.8363557]
 localizacaoAtual = coordenadaInicial
 
-# Coordenadas de origem e destino
+
+id_escola = 1 
+
+
 orig_coord = localizacaoAtual
-dest_coord = listaEscolas["escolas"][listaAlunos["alunos"][7]['idEscola']]['coordenadas']
+dest_coord = listaEscolas["escolas"][id_escola]['coordenadas']
 
 print(dest_coord)
 # Baixar grafo da área em torno dos pontos
@@ -60,13 +63,13 @@ grafo = criaGrafo.cria_grafo(G)
 
 
 
-#cria lista de alunos
-nosAlunos = lista_alunos(0, listaAlunos, G)
+#cria lista de alunos (id escola, lista de alunos, grafo)
+nosAlunos = lista_alunos(id_escola, listaAlunos, G)
 
 
 # Executar o algoritmo do Caixeiro Preguiçoso
 route, distancia = Caixeiro_preguicoso(grafo, nosAlunos, orig_no, dest_no)
-print(f"Rota encontrada: {route} com distância total de {distancia:.2f} m")
+print(f"Rota encontrada: com distância total de {distancia:.2f} m")
 
 # Converter o grafo em GeoDataFrames
 nodes, edges = graph_to_gdfs(G)
