@@ -5,7 +5,7 @@ import criaGrafo
 from listaalunos import lista_alunos
 from Caixeiro import Caixeiro_preguicoso
 from os import path, makedirs
-from streamlit import title, button,columns,markdown, cache_resource,cache_data, session_state
+from streamlit import title, button,columns,markdown, cache_resource,cache_data, session_state, selectbox
 from streamlit_folium import st_folium
 #salvando grafos para nao recalcular
 
@@ -35,8 +35,19 @@ listaAlunos = ler_arquivo("alunos.txt")
 coordenadaInicial = [-22.9105756,-42.8363557]
 localizacaoAtual = coordenadaInicial
 
+escolas_options = [
+    f"{escola['id']} - {escola.get('nome', 'Sem nome')}" for escola in listaEscolas['escolas']
+]
+escolas_ids = [escola['id'] for escola in listaEscolas['escolas']]
 
-id_escola = 1 
+id_escola = selectbox(
+    "Selecione a escola:",
+    options=range(len(escolas_options)),
+    format_func=lambda idx: escolas_options[idx],
+    index=0
+)
+
+
 
 dest_coord = listaEscolas["escolas"][id_escola]['coordenadas']
 
