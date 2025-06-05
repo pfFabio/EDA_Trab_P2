@@ -1,34 +1,145 @@
-import osmnx as ox
-import networkx as nx
-import matplotlib.pyplot as plt
+from Modelo import Pessoa, Destino, Funcoes
+from osmnx import load_graphml, graph_from_point, save_graphml
+from os import path, makedirs
+from json import load
+from folium import LayerControl
+from streamlit import title, button,columns,markdown, cache_resource,cache_data, session_state
+from streamlit_folium import st_folium
 
-# Define o nome da cidade ou área de interesse
-lugar = "Maricá, Brazil"
 
-# Baixa o grafo da rede viária da área
-G = ox.graph_from_place(lugar,dist=5000, network_type="drive")  # use 'drive' para carros
+funcoes = Funcoes()
+#salvando grafos para nao recalcular
 
-grafo = {}
-for u, v, data in G.edges(data=True):
-    dist = data.get('length', 1)
-    if u not in grafo:
-        grafo[u] = {}
-    grafo[u][v] = dist
+graph_filename = "marica_drive_graph.graphml"
+graph_folder = "graphs" # Pasta para armazenar os grafos
 
-# Define coordenadas de origem e destino (longitude, latitude)
-orig_coord = (-22.95799250187836, -42.94133869533531)  
-dest_coord = (-22.904698114208646, -42.80202441250512)  
+# Cria a pasta 'graphs' se ela não existir
+if not path.exists(graph_folder):
+    makedirs(graph_folder)
 
-# Converte coordenadas para nós mais próximos no grafo
-orig_node = ox.distance.nearest_nodes(G, X=orig_coord[1], Y=orig_coord[0])
-dest_node = ox.distance.nearest_nodes(G, X=dest_coord[1], Y=dest_coord[0])
+graph_filepath = path.join(graph_folder, graph_filename)
 
-# Calcula a rota mais curta por distância
-rota = nx.shortest_path(G, orig_node, dest_node, weight="length")
 
-distancia_km = nx.shortest_path_length(G, orig_node, dest_node, weight="length")/1000
+# abrir json
+@cache_data
+def ler_arquivo(caminho_arquivo):
+    print("Lendo Json...")
+    with open(caminho_arquivo, "r") as arquivo:
+        dados = load(arquivo)
+    return dados
 
-# Plota o grafo com a rota destacada
-print(distancia_km)
-fig, ax = ox.plot_graph_route(G, rota, route_linewidth=4, node_size=0, bgcolor='white')
-plt.show()
+lista = ler_arquivo("alunos.txt")
+
+#coordenada inicial - GARAGEM
+
+coordenadaInicial = [-22.9105756,-42.8363557]
+localizacaoAtual = coordenadaInicial
+
+# PREPARANDO LISTA DE ALUNOS EM OBJETOS
+alunos = []
+
+for aluno in lista['alunos']:
+    alunos.append(Pessoa(aluno['id'], aluno['nome'], aluno['idEscola'], aluno['coordenadas']))
+
+
+# PREPARANDO LISTA DE ESCOLAS QUE TEM ALUNOS A RECEBER EM OBJETOS
+escolas = []
+escolasIdCadastradas = []
+
+for aluno in alunos:
+    if aluno.idDestino not in escolasIdCadastradas:
+        escolaEmCadastro = Destino(lista['escolas'][aluno.idDestino]['id'], lista['escolas'][aluno.idDestino]['nome'], lista['escolas'][aluno.idDestino]['coordenadas'])
+        escolaEmCadastro.adicionarVisitante(aluno)
+        escolas.append(escolaEmCadastro)
+        escolasIdCadastradas.append(aluno.idDestino)
+    else:
+        for escola in escolas:
+            if escola.id == aluno.idDestino:
+                escola.adicionarVisitante(aluno)
+
+#GRAFOS DE RUAS
+
+#salvando ou abrindo grafos para nao recalcular
+
+graph_filename = "marica_drive_graph.graphml"
+graph_folder = "graphs" # Pasta para armazenar os grafos
+
+# Cria a pasta 'graphs' se ela não existir
+if not path.exists(graph_folder):
+    makedirs(graph_folder)
+
+graph_filepath = path.join(graph_folder, graph_filename)
+
+
+# Baixar grafo da área em torno dos pontos
+G = None
+if path.exists(graph_filepath):
+    print(f"Carregando grafo de ruas de '{graph_filepath}'...")
+    G = load_graphml(graph_filepath)
+    print("Grafo de ruas carregado com sucesso.")
+else:
+    print(f"Baixando grafo de ruas para a área ao redor de {localizacaoAtual}...")
+    G = graph_from_point(localizacaoAtual, dist=15000, network_type="drive")
+    print("Grafo baixado com sucesso.")
+    print(f"Salvando grafo em '{graph_filepath}'...")
+    save_graphml(G, filepath=graph_filepath)
+    print("Grafo salvo com sucesso.")
+
+#le todos os nós e organiza
+grafo = funcoes.cria_grafo(G)
+
+#CRIANDO LISTA DE BUSCAS
+coordenadaInicial = [-22.9105756,-42.8363557]
+listaBusca = [] 
+listaPessoasRecolhidas = []
+
+for aluno in alunos:
+    listaBusca.append(aluno)
+
+for escola in escolas:
+    listaBusca.append(escola)
+
+listaPessoasRecolhidas = [""]
+
+
+title("PROVan")
+
+
+
+trecho_idx = 0
+
+# Inicializa índice de trecho e flag de primeira renderização
+if "trecho_idx" not in session_state:
+    session_state.trecho_idx = 0
+    session_state.mostrar_mapa = True  # Primeira renderização
+
+col1, col2, col3 = columns([1, 2, 1])
+
+with col1:
+    if button("⬅️ Anterior") and session_state.trecho_idx > 0:
+        session_state.trecho_idx -= 1
+        session_state.mostrar_mapa = True
+
+with col3:
+    if button("Próximo ➡️") and session_state.trecho_idx < len(listaBusca) - 1:
+        session_state.trecho_idx += 1
+        session_state.mostrar_mapa = True
+
+with col2:
+    markdown(
+        f"<h4 style='text-align: center;'>{listaPessoasRecolhidas[-1]}</h4>",
+        unsafe_allow_html=True
+    )
+
+# Se for a primeira vez ou se clicou em algum botão, plota o mapa
+if session_state.get("mostrar_mapa", False):
+    mapa_temp, listaBusca, coordenadaInicial, listaPessoasRecolhidas = funcoes.plotarMapa(
+        coordenadaInicial, listaBusca, grafo, G, listaPessoasRecolhidas, trecho_idx
+    )
+    LayerControl().add_to(mapa_temp)
+    st_folium(mapa_temp, width=900, height=600)
+    session_state.mostrar_mapa = False  # Resetar flag após plotar
+
+
+
+

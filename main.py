@@ -1,18 +1,26 @@
 from Modelo import Pessoa, Destino, Funcoes
+from Modelo import Pessoa, Destino, Funcoes
+from osmnx import load_graphml, graph_from_point, save_graphml, nearest_nodes, graph_to_gdfs
+from os import path, makedirs
+from json import load
+from folium import Map, FeatureGroup, PolyLine, Marker, Icon, vector_layers, LayerControl
 
-#coordenada inicial - GARAGEM
+funcoes = Funcoes()
+
+# coordenada inicial - GARAGEM
 
 coordenadaInicial = [-22.9105756,-42.8363557]
 localizacaoAtual = coordenadaInicial
 
+
 # PEGANDO DADOS DO JSON
-listaEscolas = Funcoes.lerArquivo("escolas.txt")
-listaAlunos = Funcoes.lerArquivo("alunos.txt")
+lista = funcoes.lerArquivo("alunos.txt")
+
 
 # PREPARANDO LISTA DE ALUNOS EM OBJETOS
 alunos = []
 
-for aluno in listaAlunos['alunos']:
+for aluno in lista['alunos']:
     alunos.append(Pessoa(aluno['id'], aluno['nome'], aluno['idEscola'], aluno['coordenadas']))
 
 
@@ -22,7 +30,7 @@ escolasIdCadastradas = []
 
 for aluno in alunos:
     if aluno.idDestino not in escolasIdCadastradas:
-        escolaEmCadastro = Destino(listaEscolas['escolas'][aluno.idDestino]['id'], listaEscolas['escolas'][aluno.idDestino]['nome'], listaEscolas['escolas'][aluno.idDestino]['coordenadas'])
+        escolaEmCadastro = Destino(lista['escolas'][aluno.idDestino]['id'], lista['escolas'][aluno.idDestino]['nome'], lista['escolas'][aluno.idDestino]['coordenadas'])
         escolaEmCadastro.adicionarVisitante(aluno)
         escolas.append(escolaEmCadastro)
         escolasIdCadastradas.append(aluno.idDestino)
@@ -30,6 +38,7 @@ for aluno in alunos:
         for escola in escolas:
             if escola.id == aluno.idDestino:
                 escola.adicionarVisitante(aluno)
+
 
 #GRAFOS DE RUAS
 
@@ -60,13 +69,23 @@ else:
     print("Grafo salvo com sucesso.")
 
 #le todos os nós e organiza
-grafo = criaGrafo.cria_grafo(G)
+grafo = funcoes.cria_grafo(G)
 
 
 #CRIANDO LISTA DE BUSCAS
-
+coordenadaInicial = [-22.9105756,-42.8363557]
 listaBusca = [] 
+listaPessoasRecolhidas = []
 
-for aluno in aluno:
-    aluno.calcularPonto(grafo)
-    listaBusca.append(aluno.ponto)
+for aluno in alunos:
+    listaBusca.append(aluno)
+
+for escola in escolas:
+    listaBusca.append(escola)
+
+
+       
+mapa, listaBusca, coordenadaInicial, listaPessoasRecolhidas = funcoes.plotarMapa(coordenadaInicial, listaBusca, grafo, G, listaPessoasRecolhidas, 0)
+for pontos in listaPessoasRecolhidas:
+    print(pontos.nome)
+mapa.show_in_browser() # exibe temporario
