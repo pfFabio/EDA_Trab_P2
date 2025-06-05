@@ -7,6 +7,7 @@ from streamlit import title, button,columns,markdown, cache_resource,cache_data,
 from streamlit_folium import st_folium
 
 
+
 funcoes = Funcoes()
 #salvando grafos para nao recalcular
 
@@ -111,6 +112,7 @@ trecho_idx = 0
 # Inicializa índice de trecho e flag de primeira renderização
 if "trecho_idx" not in session_state:
     session_state.trecho_idx = 0
+if "mostrar_mapa" not in session_state:
     session_state.mostrar_mapa = True  # Primeira renderização
 
 col1, col2, col3 = columns([1, 2, 1])
@@ -131,14 +133,20 @@ with col2:
         unsafe_allow_html=True
     )
 
+
 # Se for a primeira vez ou se clicou em algum botão, plota o mapa
 if session_state.get("mostrar_mapa", False):
     mapa_temp, listaBusca, coordenadaInicial, listaPessoasRecolhidas = funcoes.plotarMapa(
-        coordenadaInicial, listaBusca, grafo, G, listaPessoasRecolhidas, trecho_idx
+        coordenadaInicial, listaBusca, grafo, G, listaPessoasRecolhidas, session_state.trecho_idx
     )
     LayerControl().add_to(mapa_temp)
+
+
+
+    
     st_folium(mapa_temp, width=900, height=600)
-    session_state.mostrar_mapa = False  # Resetar flag após plotar
+    
+    #session_state.mostrar_mapa = False  # Resetar flag após plotar
 
 
 

@@ -5,10 +5,11 @@ import criaGrafo
 from listaalunos import lista_alunos
 from Caixeiro import Caixeiro_preguicoso
 from os import path, makedirs
-from streamlit import title, button,columns,markdown, cache_resource,cache_data, session_state, selectbox
+from streamlit import title, container, divider, button,columns,markdown, cache_resource,cache_data, session_state, selectbox
 from streamlit_folium import st_folium
-#salvando grafos para nao recalcular
 
+
+#salvando grafos para nao recalcular
 graph_filename = "marica_drive_graph.graphml"
 graph_folder = "graphs" # Pasta para armazenar os grafos
 
@@ -23,7 +24,7 @@ graph_filepath = path.join(graph_folder, graph_filename)
 @cache_data
 def ler_arquivo(caminho_arquivo):
     print("Lendo Json...")
-    with open(caminho_arquivo, "r") as arquivo:
+    with open(caminho_arquivo, "r", encoding="utf-8") as arquivo:
         dados = load(arquivo)
     return dados
 
@@ -40,11 +41,23 @@ escolas_options = [
 ]
 escolas_ids = [escola['id'] for escola in listaEscolas['escolas']]
 
+
+markdown(
+    """
+    <div style='text-align: center; margin-bottom: 0.2em;'>
+        <span style='font-size:1.1em; color:#117A65; font-weight:bold;'>
+            Escolha a escola de destino:
+        </span>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 id_escola = selectbox(
     "Selecione a escola:",
     options=range(len(escolas_options)),
     format_func=lambda idx: escolas_options[idx],
-    index=0
+    index=0,
+    label_visibility="collapsed"
 )
 
 
@@ -83,7 +96,7 @@ grafo = criaGrafo.cria_grafo(G)
 
 #cria lista de alunos (id escola, lista de alunos, grafo)
 nosAlunos = lista_alunos(id_escola, listaAlunos, G)
-
+nosAlunosMapa = nosAlunos
 
 # Executar o algoritmo do Caixeiro Preguiçoso
 @cache_data
@@ -105,7 +118,23 @@ grupoRuas = FeatureGroup("Ruas").add_to(mapa)
 grupoRota = FeatureGroup("RotaAtual").add_to(mapa)
 
 
-title("Mapa de Trechos")
+# --- CONFIGURAÇÕES INICIAIS ---
+st_page_title = "PROVAN - Roteirização de Van Escolar"
+st_page_icon = "🚌"
+
+# Título estilizado
+markdown(
+    """
+    <div style='text-align: center; margin-bottom: 0.5em;'>
+        <h1 style='color: #2E86C1; margin-bottom: 0;'>PROVAN</h1>
+        <h4 style='color: #117A65; margin-top: 0;'>Roteirização inteligente de van escolar</h4>
+        <span style='font-size:1.1em;'>Calcule a melhor rota para buscar alunos e levá-los à escola!</span>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+divider()
 
 # Slider para escolher o trecho
 if "trecho_idx" not in session_state:
@@ -114,15 +143,27 @@ if "trecho_idx" not in session_state:
 col1, col2, col3 = columns([1,2,1])
 
 with col1:
-    if button("⬅️ Anterior") and session_state.trecho_idx > 0:
+    if button("⬅️ Anterior", use_container_width=True) and session_state.trecho_idx > 0:
         session_state.trecho_idx -= 1
 
 with col3:
-    if button("Próximo ➡️") and session_state.trecho_idx < len(trechos) - 1:
+    if button("Próximo ➡️", use_container_width=True) and session_state.trecho_idx < len(trechos) - 1:
         session_state.trecho_idx += 1
 
 with col2:
-    markdown(f"<h4 style='text-align: center;'>Trecho {session_state.trecho_idx + 1} de {len(trechos)}</h4>", unsafe_allow_html=True)
+        markdown(
+        f"""
+        <div style='text-align: center;'>
+            <span style='font-size:1.2em; color:#2E86C1;'>
+                Trecho <b>{session_state.trecho_idx + 1}</b> de <b>{len(trechos)}</b>
+            </span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+divider()
+
 
 trecho_idx = session_state.trecho_idx
 
@@ -178,7 +219,7 @@ for escola in listaEscolas['escolas']:
 
 # marcadores de alunos
 grupoAlunos = FeatureGroup("Alunos").add_to(mapa_temp)
-for node_id in nosAlunos:
+for node_id in nosAlunosMapa:
     lat = G.nodes[node_id]['y']
     lon = G.nodes[node_id]['x']
     Marker(
@@ -189,6 +230,18 @@ for node_id in nosAlunos:
 
 LayerControl().add_to(mapa_temp)
 st_folium(mapa_temp, width=900, height=600)
+
+with container():
+    markdown(
+        f"""
+        <div style='text-align: center; margin-top: 1em;'>
+            <span style='font-size:1.1em; color:#117A65;'>
+                Distância total da rota: <b>{total_dist:.2f} m</b>
+            </span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 
