@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_d8aaf9b87d1ae72069b59a33ae414029 {
+                    position: relative;
+                    width: 960.0px;
+                    height: 640.0px;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_d8aaf9b87d1ae72069b59a33ae414029" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_d8aaf9b87d1ae72069b59a33ae414029 = L.map(
+                "map_d8aaf9b87d1ae72069b59a33ae414029",
+                {
+                    center: [-22.89902169110748, -42.8146525987823],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 13,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_90e4e141f575e97b6a82e83d9114414c = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_90e4e141f575e97b6a82e83d9114414c.addTo(map_d8aaf9b87d1ae72069b59a33ae414029);
+        
+    
+            var feature_group_e1d2f08d53a674ba3ef982167ee1b2a6 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_0951e80e8ab42bc151b1549a97ae1ee3 = L.marker(
+                [-22.9036571, -42.8291497],
+                {
+}
+            ).addTo(feature_group_e1d2f08d53a674ba3ef982167ee1b2a6);
+        
+    
+            var icon_d229869106e02f81e9f41f5086174333 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "building",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_34df7db5f756ca9798b4bf4a9863c81d = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0766e4ffbc3e85e7e17a0eb22068a54b = $(`<div id="html_0766e4ffbc3e85e7e17a0eb22068a54b" style="width: 100.0%; height: 100.0%;">Desembarque de:    Thomaz Ana</div>`)[0];
+                popup_34df7db5f756ca9798b4bf4a9863c81d.setContent(html_0766e4ffbc3e85e7e17a0eb22068a54b);
+            
+        
+
+        marker_0951e80e8ab42bc151b1549a97ae1ee3.bindPopup(popup_34df7db5f756ca9798b4bf4a9863c81d)
+        ;
+
+        
+    
+    
+            marker_0951e80e8ab42bc151b1549a97ae1ee3.bindTooltip(
+                `<div>
+                     E.M. Antonio Lopes da Fontoura
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0951e80e8ab42bc151b1549a97ae1ee3.setIcon(icon_d229869106e02f81e9f41f5086174333);
+            
+    
+            var marker_e340e1b878051c7db715fbd3d9770bea = L.marker(
+                [-22.9302691, -42.8874139],
+                {
+}
+            ).addTo(feature_group_e1d2f08d53a674ba3ef982167ee1b2a6);
+        
+    
+            var icon_ad6200def1e13cfbe43570f2b1303f33 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "user",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+            marker_e340e1b878051c7db715fbd3d9770bea.bindTooltip(
+                `<div>
+                     Java
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_e340e1b878051c7db715fbd3d9770bea.setIcon(icon_ad6200def1e13cfbe43570f2b1303f33);
+            
+    
+            var marker_bf9e122c6a9140e196d2237c233fe907 = L.marker(
+                [-22.9125208, -42.935094],
+                {
+}
+            ).addTo(feature_group_e1d2f08d53a674ba3ef982167ee1b2a6);
+        
+    
+            var icon_5aae53fa1e49beb16cda7d5862c26f3c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightblue",
+  "iconColor": "white",
+  "icon": "building",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_fd74227e9a116e6c5fde7ec4378954f1 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e9bd5165bab49682c708dab8eca0e88f = $(`<div id="html_e9bd5165bab49682c708dab8eca0e88f" style="width: 100.0%; height: 100.0%;">Desembarque de:    Antonieta Carlos Fredericjson</div>`)[0];
+                popup_fd74227e9a116e6c5fde7ec4378954f1.setContent(html_e9bd5165bab49682c708dab8eca0e88f);
+            
+        
+
+        marker_bf9e122c6a9140e196d2237c233fe907.bindPopup(popup_fd74227e9a116e6c5fde7ec4378954f1)
+        ;
+
+        
+    
+    
+            marker_bf9e122c6a9140e196d2237c233fe907.bindTooltip(
+                `<div>
+                     E.M. Aniceto Elias (Ver.)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_bf9e122c6a9140e196d2237c233fe907.setIcon(icon_5aae53fa1e49beb16cda7d5862c26f3c);
+            
+    
+            var marker_81da9892423f41eba05f6422bc82ad3f = L.marker(
+                [-22.9565934, -42.9415574],
+                {
+}
+            ).addTo(feature_group_e1d2f08d53a674ba3ef982167ee1b2a6);
+        
+    
+            var icon_7f37929276041c8421aa55a45ee8662d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "user",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+            marker_81da9892423f41eba05f6422bc82ad3f.bindTooltip(
+                `<div>
+                     Maria
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_81da9892423f41eba05f6422bc82ad3f.setIcon(icon_7f37929276041c8421aa55a45ee8662d);
+            
+    
+            var marker_535bd5673fc0e31883bae9341b160171 = L.marker(
+                [-22.9594723, -42.9486923],
+                {
+}
+            ).addTo(feature_group_e1d2f08d53a674ba3ef982167ee1b2a6);
+        
+    
+            var icon_daa37c98eb97fbb33f73ef21fe4fc770 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "user",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+            marker_535bd5673fc0e31883bae9341b160171.bindTooltip(
+                `<div>
+                     Joao
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_535bd5673fc0e31883bae9341b160171.setIcon(icon_daa37c98eb97fbb33f73ef21fe4fc770);
+            
+    
+            var marker_b323f5152bc11cd38d6fcbe1e52196e7 = L.marker(
+                [-22.9620619, -42.9567384],
+                {
+}
+            ).addTo(feature_group_e1d2f08d53a674ba3ef982167ee1b2a6);
+        
+    
+            var icon_385a29cb3c6aa0df402c1d42282fb1bf = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "user",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+            marker_b323f5152bc11cd38d6fcbe1e52196e7.bindTooltip(
+                `<div>
+                     José
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_b323f5152bc11cd38d6fcbe1e52196e7.setIcon(icon_385a29cb3c6aa0df402c1d42282fb1bf);
+            
+    
+            feature_group_e1d2f08d53a674ba3ef982167ee1b2a6.addTo(map_d8aaf9b87d1ae72069b59a33ae414029);
+        
+    
+            var feature_group_23abc627fc5b90eceaeb6565f2b918c9 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var poly_line_3b4f28c077db6726e690bd2bc750dfaa = L.polyline(
+                [[-22.9039167, -42.8138832], [-22.9042185, -42.8139219], [-22.9054594, -42.8141967], [-22.9056109, -42.8145366], [-22.9067525, -42.8183546], [-22.9071463, -42.8192112], [-22.9071994, -42.819411], [-22.9073192, -42.8205027], [-22.9074577, -42.8224575], [-22.9074638, -42.8228692], [-22.9074452, -42.8232305], [-22.9073814, -42.8239412], [-22.9074054, -42.8248744], [-22.9077603, -42.8273704], [-22.9078813, -42.8279458], [-22.9071388, -42.8278814], [-22.9071771, -42.8286968], [-22.9038791, -42.8290192]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 4}
+            ).addTo(feature_group_23abc627fc5b90eceaeb6565f2b918c9);
+        
+    
+            poly_line_3b4f28c077db6726e690bd2bc750dfaa.bindTooltip(
+                `<div>
+                     2.22 KM
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            feature_group_23abc627fc5b90eceaeb6565f2b918c9.addTo(map_d8aaf9b87d1ae72069b59a33ae414029);
+        
+    
+            var circle_2bb926014a34e5374fc41b2b8f01a920 = L.circle(
+                [-22.9039167, -42.8138832],
+                {"bubblingMouseEvents": true, "color": "#3388ff", "dashArray": null, "dashOffset": null, "fill": "blue", "fillColor": "#3388ff", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 30, "stroke": true, "weight": 3}
+            ).addTo(map_d8aaf9b87d1ae72069b59a33ae414029);
+        
+    
+            var layer_control_28b21de7a9c02cd01d666a2804ba65c1_layers = {
+                base_layers : {
+                    "cartodbvoyager" : tile_layer_90e4e141f575e97b6a82e83d9114414c,
+                },
+                overlays :  {
+                    "Marcadores" : feature_group_e1d2f08d53a674ba3ef982167ee1b2a6,
+                    "RotaAtual" : feature_group_23abc627fc5b90eceaeb6565f2b918c9,
+                },
+            };
+            let layer_control_28b21de7a9c02cd01d666a2804ba65c1 = L.control.layers(
+                layer_control_28b21de7a9c02cd01d666a2804ba65c1_layers.base_layers,
+                layer_control_28b21de7a9c02cd01d666a2804ba65c1_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": true,
+  "autoZIndex": true,
+}
+            ).addTo(map_d8aaf9b87d1ae72069b59a33ae414029);
+
+        
+</script>
+</html>
